@@ -197,6 +197,8 @@ export default {
                     this.tetris_status[i][j] = this.tetris_status[i - 1][j]
                   }
                 }
+                // 加分
+                this.$parent.lineOk()
               }
             }
           }

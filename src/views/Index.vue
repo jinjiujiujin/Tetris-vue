@@ -3,13 +3,14 @@
         <!--ui-->
         <div id="ui_bg" class="ui_bg">
             <div style="float:left;margin-right:4px;">
-                速度：<span>1</span>
+                <!--保留一位小数-->
+                速度：<span>{{ data.speed.toFixed(1) }}</span>
             </div>
             <div style="float:left;">
-                当前分数：<span>0</span>
+                当前分数：<span>{{ data.cur_points }}</span>
             </div>
             <div style="float:right;">
-                最高分数：<span>0</span>
+                最高分数：<span>{{ data.max_points }}</span>
             </div>
         </div>
         <game-canvas ref="gameCanvas"></game-canvas>
@@ -26,9 +27,9 @@ export default {
       data: {
         speed: 1,
         cur_points: 0,
-        max_points: 0,
-        timer: null// 向下移动的定时器
-      }
+        max_points: 0
+      },
+      timer: null// 向下移动的定时器
     }
   },
   components: {
@@ -64,10 +65,10 @@ export default {
   },
   methods: {
     newGame () {
-      this.cur_points = 0
-      this.speed = 1
+      this.data.cur_points = 0
+      this.data.speed = 1
       this.$refs.gameCanvas.newGame()// 调用gameCanvas里的newGame
-      this.timer = setInterval(() => this.next(), 500 / this.speed)
+      this.timer = setInterval(() => this.next(), 500 / this.data.speed)
     },
     next () { // 方块下移
       if (this.$refs.gameCanvas.moveDown()) {
@@ -81,7 +82,25 @@ export default {
         }
         // 新的block
         this.$refs.gameCanvas.createBlock()
+        this.squareOk()
       }
+    },
+    // 当一个方块固定
+    squareOk () {
+      this.data.cur_points++
+      if (this.data.cur_points > this.data.max_points) {
+        this.data.max_points = this.data.cur_points
+      }
+    },
+    // 当一行被消除
+    lineOk () {
+      this.data.cur_points += 50
+      if (this.data.cur_points > this.data.max_points) {
+        this.data.max_points = this.data.cur_points
+      }
+      this.data.speed += 0.05
+      clearInterval(this.timer)
+      this.timer = setInterval(() => this.next(), 500 / this.data.speed)// 把他放在computed里更好。
     }
   }
 }
