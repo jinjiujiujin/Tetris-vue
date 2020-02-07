@@ -94,7 +94,7 @@ export default {
     h += document.getElementById('ui_bg').getBoundingClientRect().height// 加上ui_bg的高度
     var container = document.getElementById('container')
     container.style.height = h + 'px'
-    container.style.width = canvas.width + 'px'
+    container.style.width = canvas.width + 50 + 'px' // 又加了50是因为ui界面太小。
   },
   methods: {
     // 绘制背景线
@@ -294,5 +294,10 @@ export default {
 </script>
 
 <style scoped>
-
+canvas{
+  margin: 0 auto;
+  position: absolute;
+  left: 0;
+  right: 0;
+}
 </style>

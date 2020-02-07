@@ -14,11 +14,13 @@
             </div>
         </div>
         <game-canvas ref="gameCanvas"></game-canvas>
+        <menu-box class="menu" v-if="show"></menu-box>
     </div>
 </template>
 
 <script>
 import GameCanvas from '@/components/GameCanvas.vue'
+import MenuBox from '@/components/MenuBox.vue'
 
 export default {
   name: 'Index',
@@ -29,11 +31,13 @@ export default {
         cur_points: 0,
         max_points: 0
       },
-      timer: null// 向下移动的定时器
+      timer: null, // 向下移动的定时器
+      show: false
     }
   },
   components: {
-    GameCanvas
+    GameCanvas,
+    MenuBox
   },
   mounted () {
     this.newGame()
@@ -69,14 +73,14 @@ export default {
       this.data.speed = 1
       this.$refs.gameCanvas.newGame()// 调用gameCanvas里的newGame
       this.timer = setInterval(() => this.next(), 500 / this.data.speed)
+      this.show = false
     },
     next () { // 方块下移
       if (this.$refs.gameCanvas.moveDown()) {
         // 判断是否触顶
         for (let i = 0; i < this.$refs.gameCanvas.currentFall.length; i++) {
           if (this.$refs.gameCanvas.currentFall[i].y === 0) {
-            // gameEnd()
-            console.log('game end')
+            this.gameEnd()
             return
           }
         }
@@ -84,6 +88,10 @@ export default {
         this.$refs.gameCanvas.createBlock()
         this.squareOk()
       }
+    },
+    gameEnd () {
+      clearInterval(this.timer)
+      this.show = true
     },
     // 当一个方块固定
     squareOk () {
@@ -120,6 +128,7 @@ div>span{
   padding:0;
 }
 .bg{
+  position: relative;
   font-size:13pt;
   background-color:rgb(239, 239, 227);
   /*好看的渐变色*/
@@ -128,11 +137,22 @@ div>span{
   box-shadow:#cdc8c1 -1px -1px 7px 0px;
   padding-bottom:4px;
   margin:0 auto;
+  z-index:1;
 }
 
 .ui_bg{
   border-bottom:1px #a69e9ea3 solid;
   padding-bottom:2px;
   overflow:hidden;/*没有这句的话因为子div都设置了float，所以是浮在网页上的，所以父div就没有高度，这句清除了浮动，让父div有了子div的高度*/
+}
+
+.menu{
+  z-index:2;
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  margin:auto;
 }
 </style>
